@@ -1,6 +1,8 @@
 import discord
 import random
+import requests
 import os
+from bs4 import BeautifulSoup
 from discord.ext import commands, tasks
 from itertools import cycle
 import datetime
@@ -10,7 +12,7 @@ import json
 
 
 client = commands.Bot(command_prefix = '.')
-status = cycle(['with sid', 'GTA V']) #playing status 
+status = cycle(['with sid', 'GTA V']) 
 
 @client.event
 
@@ -103,7 +105,7 @@ async def unban(ctx, *, member):
 
 @client.command()
 async def displayembed(ctx):
-        '''Just an example of how embed works'''
+
     embed = discord.Embed(
         title = 'SLYTHERIN HOUSE',
         description = 'best house ever',
@@ -130,6 +132,7 @@ async def userinfo(ctx, member: discord.Member = None ):
 
     roles = sorted(member.roles, key=lambda c: c.position)
     roles = roles[::-1]
+    color = 0x000000
     for role in roles:
         if str(role.color) != "#000000":
             color = int(str(role.color)[1:], 16)
@@ -243,5 +246,19 @@ async def roleinfo(ctx, *, role: discord.Role=None):
                            "to send this")
 
 
+
+@client.command()
+async def load(ctx, extension):
+    client.load_extension(f'cogs.{extension}')
+
+@client.command()
+async def unload(ctx, extension):
+    client.unload_extension(f'cogs.{extension}')   
+
+for filename in os.listdir('./cogs'):
+    if filename.endswith('.py'):
+        client.load_extension(f'cogs.{filename[:-3]}')
+
             
-client.run('YOUR BOT TOKEN')
+            
+client.run('BOT TOKEN')
